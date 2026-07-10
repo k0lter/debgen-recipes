@@ -1,0 +1,15 @@
+name: 'rust-analyzer'
+location: 'github://rust-lang/rust-analyzer'
+flavor: 'rust-analyzer-x86_64-unknown-linux-gnu'
+description: 'A Rust compiler front-end for IDEs'
+contact: 'The Rust lang developers'
+homepage: 'https://rust-analyzer.github.io/'
+license: 'MIT'
+arch: 'any'
+configure:
+  mv:
+    'rust-analyzer-x86_64-unknown-linux-gnu': 'rust-analyzer'
+dirs:
+  - 'usr/bin'
+files:
+  'rust-analyzer': 'usr/bin'

@@ -1,0 +1,29 @@
+name: 'yazi'
+location: 'github://sxyazi/yazi'
+flavor: 'x86_64-unknown-linux-musl.zip'
+description: 'Blazing fast terminal file manager written in Rust, based on async I/O'
+contact: 'misaki masa <sxyazi+gh@gmail.com>'
+homepage: 'https://github.com/sxyazi/yazi'
+license: 'MIT'
+arch: 'any'
+configure:
+  mv:
+    'completions/yazi.bash': 'completions/yazi'
+    'completions/ya.bash': 'completions/ya'
+dirs:
+  - 'usr/bin'
+  - 'usr/share/bash-completion/completions'
+  - 'usr/share/fish/vendor_completions.d'
+  - 'usr/share/zsh/vendor-completions'
+files:
+  'ya': 'usr/bin'
+  'yazi': 'usr/bin'
+  'LICENSE': 'usr/share/doc/{name}'
+  'README.md': 'usr/share/doc/{name}'
+  'completions/yazi': 'usr/share/bash-completion/completions'
+  'completions/ya': 'usr/share/bash-completion/completions'
+  'completions/yazi.fish': 'usr/share/fish/vendor_completions.d'
+  'completions/ya.fish': 'usr/share/fish/vendor_completions.d'
+  'completions/_yazi': 'usr/share/zsh/vendor-completions'
+  'completions/_ya': 'usr/share/zsh/vendor-completions'
+

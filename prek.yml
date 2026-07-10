@@ -1,0 +1,12 @@
+name: 'prek'
+location: 'github://j178/prek'
+flavor: 'x86_64-unknown-linux-musl'
+description: 'A fast Git hook manager written in Rust, reimagined.'
+contact: 'j178'
+homepage: 'https://github.com/j178/prek'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'prek': 'usr/bin'

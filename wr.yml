@@ -1,0 +1,12 @@
+name: 'wr'
+location: 'github://aeyoll/wr'
+flavor: 'x86_64-unknown-linux-musl'
+description: 'A tool to deploy websites using Gitlab CI/CD'
+contact: 'Jean-Philippe Bidegain <jp@bidega.in>'
+homepage: 'https://github.com/aeyoll/wr'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'wr': 'usr/bin'

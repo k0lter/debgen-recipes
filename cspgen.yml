@@ -1,0 +1,12 @@
+name: 'cspgen'
+location: 'github://aeyoll/cspgen-rs'
+flavor: 'x86_64-unknown-linux-musl'
+description: 'Generate CSP headers from a given url, or multiple urls'
+contact: 'Jean-Philippe Bidegain <jp@bidega.in>'
+homepage: 'https://github.com/aeyoll/cspgen-rs'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'cspgen': 'usr/bin'

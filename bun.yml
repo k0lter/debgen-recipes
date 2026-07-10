@@ -1,0 +1,12 @@
+name: 'bun'
+location: 'github://oven-sh/bun'
+flavor: 'bun-linux-x64.zip'
+description: 'Fast JavaScript runtime, bundler, test runner, and package manager'
+contact: 'The bun Project Developers'
+homepage: 'https://bun.com'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'bun': 'usr/bin'

@@ -1,0 +1,15 @@
+name: 'chezmoi'
+location: 'github://twpayne/chezmoi'
+flavor: 'chezmoi-linux-amd64'
+description: 'Manage your dotfiles across multiple diverse machines, securely'
+contact: 'Tom Payne <twpayne@gmail.com>'
+homepage: 'https://github.com/twpayne/chezmoi'
+license: 'MIT'
+arch: 'any'
+configure:
+  mv:
+    'chezmoi-linux-amd64': 'chezmoi'
+dirs:
+  - 'usr/bin'
+files:
+  'chezmoi': 'usr/bin'

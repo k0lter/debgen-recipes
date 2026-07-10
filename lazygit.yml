@@ -1,0 +1,14 @@
+name: 'lazygit'
+location: 'github://jesseduffield/lazygit'
+flavor: 'linux_x86_64'
+description: 'Simple terminal UI for git commands '
+contact: 'Jesse Duffield <jessedduffield@gmail.com>'
+homepage: 'https://github.com/{repo}'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'lazygit': 'usr/bin'
+  'LICENSE': 'usr/share/doc/{name}'
+  'README.md': 'usr/share/doc/{name}'

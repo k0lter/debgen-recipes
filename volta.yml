@@ -1,0 +1,14 @@
+name: 'volta'
+location: 'github://volta-cli/volta'
+flavor: 'volta-[\.\d]+-linux.tar.gz'
+description: 'JS Toolchains as Code'
+contact: 'The volta Project Developers'
+homepage: 'https://volta.sh'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'volta': 'usr/bin'
+  'volta-migrate': 'usr/bin'
+  'volta-shim': 'usr/bin'

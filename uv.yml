@@ -1,0 +1,14 @@
+name: 'uv'
+repo: 'astral-sh/uv'
+flavor: 'uv-x86_64-unknown-linux-musl'
+location: 'github://astral-sh/uv'
+description: 'An extremely fast Python package and project manager, written in Rust.'
+contact: 'Astral <hey@astral.sh>'
+homepage: 'https://github.com/astral-sh/uv'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'uv': 'usr/bin'
+  'uvx': 'usr/bin'

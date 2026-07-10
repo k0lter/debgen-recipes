@@ -1,0 +1,5 @@
+shfmt (go)
+helix
+https://github.com/Orange-OpenSource/hurl
+https://github.com/beeb/swpui
+https://github.com/bahdotsh/giff

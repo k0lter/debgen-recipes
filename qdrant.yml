@@ -1,0 +1,111 @@
+name: 'qdrant'
+location: 'github://qdrant/qdrant'
+flavor: 'x86_64-unknown-linux-musl'
+description: 'High-Performance Vector Search Engine'
+contact: 'https://github.com/qdrant/qdrant'
+homepage: 'https://qdrant.tech/'
+license: 'Apache-2.0'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+  - 'etc/qdrant'
+  - 'etc/logrotate.d'
+  - 'var/log/qdrant'
+files:
+  'qdrant': 'usr/bin'
+  'qdrant-config.yaml': 'etc/qdrant'
+  'logrotate/qdrant': 'etc/logrotate.d'
+configure:
+  mkdir:
+    - 'logrotate'
+  content:
+    qdrant-config.yaml: |
+      #
+      # Minimal Qdrant configuration
+      # https://qdrant.tech/documentation/ops-configuration/configuration/#configuration-options
+      #
+
+      #
+      # Logging
+      #
+      log_level: INFO
+      logger:
+        # Logging format, supports `text` and `json`
+        format: text
+        on_disk:
+          enabled: true
+          log_file: /var/log/qdrant/qdrant.log
+          log_level: INFO
+          # Logging format, supports `text` and `json`
+          format: text
+
+      #
+      # Storage
+      #
+      storage:
+        # Where to store all the data
+        # relative to qdrant user's HOME, expects to be /var/lib/qdrant
+        storage_path: ./storage
+        # Where to store snapshots
+        snapshots_path: ./snapshots
+        snapshots_config:
+          # "local" or "s3" - where to store snapshots
+          snapshots_storage: local
+          # s3_config:
+          #   bucket: ""
+          #   region: ""
+          #   access_key: ""
+          #   secret_key: ""
+
+      #
+      # Service
+      #
+      service:
+        # Host to bind the service on
+        host: 127.0.0.1
+        # HTTP(S) port to bind the service on
+        http_port: 6333
+        # gRPC port to bind the service on.
+        # If `null` - gRPC is disabled. Default: null
+        # Comment to disable gRPC:
+        grpc_port: null
+    qdrant.service: |
+      [Unit]
+      Description=Qdrant - High-Performance Vector Search Engine
+      After=syslog.target
+      After=network.target
+      [Service]
+      Type=simple
+      User=qdrant
+      Group=qdrant
+      ExecStart=/usr/bin/qdrant --config-path /etc/qdrant/qdrant-config.yaml
+      Restart=always
+      WorkingDirectory=/var/lib/qdrant
+      ProtectSystem=full
+      PrivateDevices=yes
+      PrivateTmp=yes
+      NoNewPrivileges=true
+      [Install]
+      WantedBy=multi-user.target
+    logrotate/qdrant: |
+      /var/log/qdrant/*.log {
+        daily
+        missingok
+        rotate 15
+        copytruncate
+        dateext
+        dateyesterday
+        compress
+        delaycompress
+        notifempty
+      }
+  mv:
+    qdrant.service: 'debian/qdrant.service'
+  postinst: |
+    if ! getent passwd qdrant >/dev/null ; then
+      echo "Adding system user: qdrant"
+      adduser --system --group --gecos "Qdrant User" --home /var/lib/qdrant qdrant >/dev/null
+    fi
+    if [ -d '/var/log/qdrant' ]; then
+      chown qdrant:qdrant /var/log/qdrant
+    fi

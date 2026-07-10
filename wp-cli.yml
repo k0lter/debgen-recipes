@@ -1,0 +1,15 @@
+name: 'wp-cli'
+location: 'github://wp-cli/wp-cli'
+flavor: 'wp-cli-[\.\d]+.phar'
+description: 'Command line interface for Wordpress'
+contact: 'WP Cli Team <contact@wp-cli.org>'
+homepage: 'https://wp-cli.org/'
+license: 'MIT'
+arch: 'any'
+configure:
+  mv:
+    'wp-cli-{version}.phar': 'wp'
+dirs:
+  - 'usr/bin'
+files:
+  'wp': 'usr/bin'

@@ -1,0 +1,23 @@
+name: 'bandwhich'
+location: 'github://imsnif/bandwhich'
+flavor: 'bandwhich-v[\d\.]+-x86_64-unknown-linux-musl.tar.gz'
+description: 'Terminal bandwidth utilization tool'
+contact: 'Aram Drevekenin <aram@poor.dev>'
+homepage: 'https://github.com/imsnif/bandwhich'
+license: 'MIT'
+arch: 'any'
+configure:
+  mv:
+    'assets/bandwhich.bash': 'assets/bandwhich'
+dirs:
+  - 'usr/bin'
+  - 'usr/share/man/man1'
+  - 'usr/share/bash-completion/completions'
+  - 'usr/share/fish/vendor_completions.d'
+  - 'usr/share/zsh/vendor-completions'
+files:
+  'bandwhich': 'usr/bin'
+  'assets/bandwhich.1': 'usr/share/man/man1'
+  'assets/bandwhich': 'usr/share/bash-completion/completions'
+  'assets/bandwhich.fish': 'usr/share/fish/vendor_completions.d'
+  'assets/_bandwhich': 'usr/share/zsh/vendor-completions'

@@ -1,0 +1,15 @@
+name: 'fx'
+location: 'github://antonmedv/fx'
+flavor: 'fx_linux_amd64'
+description: 'Terminal JSON viewer & processor'
+contact: 'Anton Medvedev'
+homepage: 'https://github.com/antonmedv/fx'
+license: 'MIT'
+arch: 'any'
+configure:
+  mv:
+    'fx_linux_amd64': 'fx'
+dirs:
+  - 'usr/bin'
+files:
+  'fx': 'usr/bin'

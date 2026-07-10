@@ -1,0 +1,121 @@
+name: 'kirin'
+location: 'github://aeyoll/kirin'
+flavor: 'kirin-[\.\d]+-x86_64-unknown-linux-musl.tar.gz'
+description: 'Onclick file sharing web app'
+contact: 'Jean-Philippe Bidegain <jp@bidega.in>'
+homepage: 'https://github.com/aeyoll/kirin'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+  - 'etc/kirin'
+  - 'etc/logrotate.d'
+  - 'var/lib/kirin'
+  - 'var/log/kirin'
+files:
+  'kirin': 'usr/bin'
+  'config.toml': 'etc/kirin'
+configure:
+  mkdir:
+    - 'logrotate'
+  content:
+    kirin.service: |
+      [Unit]
+      Description=kirin - Onclick file sharing web app
+      After=syslog.target
+      After=network.target
+      [Service]
+      Type=simple
+      User=kirin
+      Group=kirin
+      ExecStart=/usr/bin/kirin /etc/kirin/config.toml
+      StandardOutput=append:/var/log/kirin/kirin.log
+      StandardError=append:/var/log/kirin/kirin.log
+      Restart=always
+      WorkingDirectory=/var/lib/kirin
+      ProtectSystem=full
+      PrivateDevices=yes
+      PrivateTmp=yes
+      NoNewPrivileges=true
+      [Install]
+      WantedBy=multi-user.target
+    logrotate/kirin: |
+      /var/log/kirin/*.log {
+        daily
+        missingok
+        rotate 15
+        copytruncate
+        dateext
+        dateyesterday
+        compress
+        delaycompress
+        notifempty
+      }
+    config.toml: |
+      [server]
+      bind = "127.0.0.1:8080"
+      # Root URL for generated links (trailing slash optional)
+      public_base_url = "http://127.0.0.1:8080/"
+      data_dir = "/var/lib/kirin"
+      max_body_mb = 512
+      # Chunk ceiling for browser uploads (similar role to PHP max_upload_chunk_size_bytes)
+      max_upload_chunk_bytes = 5_000_000
+
+      [limits]
+      # 0 = unlimited (Jirafeau uses MB; we use bytes for precision)
+      max_upload_bytes = 0
+      link_id_length = 8
+      # Optional defaults: max concurrent async upload sessions (must be >= 1 if set), TTL in seconds
+      # max_async_upload_sessions = 512
+      # async_upload_session_ttl_secs = 3600
+
+      [upload_auth]
+      # Empty list = no upload password required (still subject to IP rules if set)
+      passwords = []
+      # CIDR or plain IPv4 strings; empty = any IP
+      allowed_ips = []
+      # IPs that may upload without password when passwords are configured
+      allowed_ips_without_password = []
+
+      [availabilities]
+      minute = true
+      hour = true
+      day = true
+      week = true
+      fortnight = true
+      month = true
+      quarter = false
+      year = false
+      none = false
+      default = "month"
+
+      [features]
+      one_time_download = true
+      one_time_download_preselected = false
+      preview = true
+      # optional | required | generated (generated not implemented; treated as optional)
+      download_password_requirement = "optional"
+
+      [admin]
+      # Admin password: empty disables admin UI. Prefer Argon2 PHC (string starting with $argon2); legacy 64-char hex = echo -n 'password' | sha256sum
+      password_sha256_hex = ""
+      # Required: unique 64 hex chars (32 bytes) for admin sessions and upload-complete tokens.
+      #   openssl rand -hex 32
+      session_signing_key_hex = ""
+      allowed_admin_ips = []
+
+      [ui]
+      title = "Kirin"
+      organisation = ""
+      # en | fr | ja
+      default_locale = "en"
+  mv:
+    kirin.service: 'debian/kirin.service'
+  postinst: |
+    if ! getent passwd kirin >/dev/null ; then
+      echo "Adding system user: kirin"
+      adduser --system --group --gecos "kirin User" --home /var/lib/kirin kirin >/dev/null
+    fi
+    if [ -d '/var/log/kirin' ]; then
+      chown kirin:kirin /var/log/kirin
+    fi

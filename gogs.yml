@@ -1,0 +1,63 @@
+name: 'gogs'
+location: 'github://gogs/gogs'
+flavor: 'linux_amd64.tar'
+description: 'Gogs is a painless self-hosted Git service'
+contact: 'unknwon <joe@namehidden.dev>'
+homepage: 'https://gogs.io/'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+  - 'etc/logrotate.d'
+  - 'var/log/gogs'
+files:
+  'gogs': 'usr/bin'
+  'LICENSE': 'usr/share/doc/{name}'
+  'README.md': 'usr/share/doc/{name}'
+  'logrotate/gogs': 'etc/logrotate.d'
+configure:
+  mkdir:
+    - 'logrotate'
+  content:
+    gogs.service: |
+      [Unit]
+      Description=Gogs (Go Git Service) server
+      After=syslog.target
+      After=network.target
+      After=mariadb.service mysql.service mysqld.service postgresql.service memcached.service redis.service
+      [Service]
+      Type=simple
+      User=git
+      Group=git
+      Environment=GOGS_WORK_DIR=/var/lib/gogs
+      ExecStart=/usr/bin/gogs web --config /var/lib/gogs/config.ini
+      Restart=always
+      WorkingDirectory=/var/lib/gogs
+      ProtectSystem=full
+      PrivateDevices=yes
+      PrivateTmp=yes
+      NoNewPrivileges=true
+      [Install]
+      WantedBy=multi-user.target
+    logrotate/gogs: |
+      /var/log/gogs/*.log {
+        daily
+        missingok
+        rotate 15
+        copytruncate
+        dateext
+        dateyesterday
+        compress
+        delaycompress
+        notifempty
+      }
+  mv:
+    gogs.service: 'debian/gogs.service'
+  postinst: |
+    if ! getent passwd git >/dev/null ; then
+      echo "Adding system user: git"
+      adduser --system --group --gecos "Gogs User" --home /var/lib/gogs git >/dev/null
+    fi
+    if [ -d '/var/log/gogs' ]; then
+      chown git:git /var/log/gogs
+    fi

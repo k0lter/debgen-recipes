@@ -1,0 +1,14 @@
+name: 'duf'
+location: 'github://muesli/duf'
+flavor: 'duf_[\d\.]+_linux_x86_64.tar.gz'
+description: 'Disk Usage/Free Utility - a better df alternative'
+contact: 'Christian Muehlhaeuser'
+homepage: 'https://github.com/muesli/duf'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+  - 'usr/share/man/man1'
+files:
+  'duf': 'usr/bin'
+  'duf.1': 'usr/share/man/man1'

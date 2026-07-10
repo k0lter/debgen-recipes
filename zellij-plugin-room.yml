@@ -1,0 +1,12 @@
+name: 'zellij-plugin-room'
+location: 'github://rvcas/room'
+flavor: 'room.wasm'
+description: 'A Zellij plugin for quickly searching and switching tabs'
+contact: 'rvcas <x@rvcas.dev>'
+homepage: 'https://github.com/rvcas/room'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/share/zellij/plugins'
+files:
+  'room.wasm': 'usr/share/zellij/plugins'

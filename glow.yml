@@ -1,0 +1,26 @@
+name: 'glow'
+location: 'github://charmbracelet/glow'
+flavor: 'glow_[\.\d]+_Linux_x86_64.tar.gz'
+description: 'Render markdown on the CLI, with pizzazz!'
+contact: 'The Charm Developers'
+homepage: 'https://github.com/charmbracelet/glow'
+license: 'MIT'
+arch: 'any'
+configure:
+  mv:
+    'completions/glow.bash': 'completions/glow'
+    'completions/glow.zsh': 'completions/_glow'
+dirs:
+  - 'usr/bin'
+  - 'usr/share/man/man1'
+  - 'usr/share/bash-completion/completions'
+  - 'usr/share/fish/vendor_completions.d'
+  - 'usr/share/zsh/vendor-completions'
+files:
+  'glow': 'usr/bin'
+  'LICENSE': 'usr/share/doc/{name}'
+  'README.md': 'usr/share/doc/{name}'
+  'manpages/glow.1.gz': 'usr/share/man/man1'
+  'completions/glow': 'usr/share/bash-completion/completions'
+  'completions/glow.fish': 'usr/share/fish/vendor_completions.d'
+  'completions/_glow': 'usr/share/zsh/vendor-completions'

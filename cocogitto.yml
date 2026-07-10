@@ -1,0 +1,13 @@
+name: 'cocogitto'
+location: 'github://cocogitto/cocogitto'
+flavor: 'x86_64-unknown-linux-musl'
+description: 'The Conventional Commits toolbox'
+contact: 'Paul Delafosse <paul.delafosse@protonmail.com>'
+homepage: 'https://github.com/cocogitto/cocogitto'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'cog': 'usr/bin'
+  'LICENSE': 'usr/share/doc/{name}'

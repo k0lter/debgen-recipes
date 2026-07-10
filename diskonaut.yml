@@ -1,0 +1,12 @@
+name: 'diskonaut'
+location: 'github://imsnif/diskonaut'
+flavor: 'diskonaut-[\d\.]+-unknown-linux-musl.tar.gz'
+description: 'Terminal disk space navigator'
+contact: 'Aram Drevekenin <aram@poor.dev>'
+homepage: 'https://github.com/imsnif/diskonaut'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'diskonaut': 'usr/bin'

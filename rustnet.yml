@@ -1,0 +1,14 @@
+name: 'rustnet'
+location: 'github://domcyrus/rustnet'
+flavor: 'rustnet-v[\d\.]+-x86_64-unknown-linux-musl.tar.gz'
+description: 'Per-process network monitoring for your terminal with deep packet inspection'
+contact: 'Marco Cadetg'
+homepage: 'https://github.com/domcyrus/rustnet'
+license: 'Apache-2.0'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'rustnet': 'usr/bin'
+  'LICENSE': 'usr/share/doc/{name}'
+  'README.md': 'usr/share/doc/{name}'

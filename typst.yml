@@ -1,0 +1,15 @@
+name: 'typst'
+location: 'github://typst/typst'
+flavor: 'x86_64-unknown-linux-musl'
+description: 'A new markup-based typesetting system that is powerful and easy to learn'
+contact: 'The Typst Project Developers'
+homepage: 'https://typst.app'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'typst': 'usr/bin'
+  'LICENSE': 'usr/share/doc/{name}'
+  'NOTICE': 'usr/share/doc/{name}'
+  'README.md': 'usr/share/doc/{name}'

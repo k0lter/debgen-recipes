@@ -1,0 +1,12 @@
+name: 'zellij'
+location: 'github://zellij-org/zellij'
+flavor: 'zellij-x86_64-unknown-linux-musl.tar.gz'
+description: 'A terminal workspace with batteries included'
+contact: 'Aram Drevekenin <aram@poor.dev>'
+homepage: 'https://github.com/zellij-org/zellij'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/bin'
+files:
+  'zellij': 'usr/bin'

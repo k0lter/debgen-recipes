@@ -1,0 +1,15 @@
+name: 'composer'
+location: 'github://composer/composer'
+flavor: 'composer\.phar$'
+description: 'Dependency Manager for PHP'
+contact: 'https://github.com/composer/composer/issues'
+homepage: 'https://getcomposer.org/'
+license: 'MIT'
+arch: 'any'
+configure:
+  mv:
+    'composer.phar': 'composer'
+dirs:
+  - 'usr/bin'
+files:
+  'composer': 'usr/bin'
