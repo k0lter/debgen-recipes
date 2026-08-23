@@ -1,0 +1,12 @@
+name: goose
+location: 'github://aaif-goose/goose'
+flavor: 'x86_64-unknown-linux-musl'
+description: 'Extensible AI agent that goes beyond code suggestions with any LLM'
+contact: 'The Goose Project Developers'
+homepage: 'https://goose-docs.ai/'
+license: 'Apache-2.0'
+arch: 'any'
+dirs:
+  - usr/bin
+files:
+  goose: usr/bin/
