@@ -1,0 +1,75 @@
+name: 'meilisearch'
+location: 'github://meilisearch/meilisearch'
+flavor: 'meilisearch-linux-amd64'
+description: 'Search engine API bringing hybrid search to applications'
+contact: 'Meilisearch <bonjour@meilisearch.com>'
+homepage: 'https://www.meilisearch.com/'
+license: 'MIT'
+arch: 'any'
+dirs:
+  - 'usr/sbin'
+  - 'etc/logrotate.d'
+  - 'etc/default'
+files:
+  'meilisearch': 'usr/bin'
+  'default/meilisearch': 'etc/default'
+configure:
+  mkdir:
+    - 'default'
+  mv:
+    meilisearch-linux-amd64: meilisearch
+    meilisearch.service: 'debian/meilisearch.service'
+  content:
+    default/meilisearch: |
+      #
+      # MeiliSearch configuration (via environment variables)
+      # 
+
+      # Configures the instance's environment. Value must be either `production` or `development`.
+      # https://www.meilisearch.com/docs/learn/configuration/instance_options#environment
+      MEILI_ENV="production"
+
+      # Sets the instance's master key, automatically protecting all routes except GET /health.
+      # https://www.meilisearch.com/docs/learn/configuration/instance_options#master-key
+      MEILI_MASTER_KEY=""
+    meilisearch.service: |
+      [Unit]
+      Description=MeiliSearch, Search engine API
+      After=network.target
+
+      [Service]
+      Type=simple
+      
+      DynamicUser=yes
+
+      EnvironmentFile=-/etc/default/meilisearch
+      ExecStart=/usr/bin/meilisearch
+      
+      WorkingDirectory=/var/lib/meilisearch
+      StateDirectory=meilisearch
+      UMask=0077
+
+      NoNewPrivileges=yes
+      CapabilityBoundingSet=
+
+      ProtectSystem=strict
+      ProtectHome=yes
+      PrivateTmp=yes
+      PrivateDevices=yes
+
+      ProtectKernelTunables=yes
+      ProtectKernelModules=yes
+      ProtectControlGroups=yes
+      ProtectKernelLogs=yes
+      ProtectClock=yes
+      ProtectHostname=yes
+
+      RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+      RestrictNamespaces=yes
+      RestrictRealtime=yes
+      RestrictSUIDSGID=yes
+      LockPersonality=yes
+      SystemCallArchitectures=native
+
+      [Install]
+      WantedBy=multi-user.target
