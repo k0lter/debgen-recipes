@@ -1,0 +1,376 @@
+name: 'postsrsd'
+location: 'github://roehling/postsrsd'
+flavor: 'postsrsd-x86_64-musl'
+description: 'Postfix Sender Rewriting Scheme daemon'
+contact: 'Timo Röhling <timo@gaussglocke.de>'
+homepage: 'https://github.com/roehling/postsrsd'
+license: 'FSFUL'
+arch: 'any'
+dirs:
+  - 'usr/sbin'
+  - 'var/lib/postsrsd'
+  - 'var/log/postsrsd'
+files:
+  'local/sbin/postsrsd': 'usr/sbin'
+  'postsrsd.conf': 'etc'
+configure:
+  content:
+    postsrsd.conf: |
+      # PostSRSd example configuration file
+      # Copyright 2022-2026 Timo Röhling
+      # SPDX-License-Identifier: FSFUL
+      #
+      # The copyright holder gives unlimited permission to copy, distribute and modify
+      # this file.
+
+      # Local domains
+      # Your local domains need not be rewritten, so PostSRSd has to know about them.
+      #
+      # Example:
+      #     domains = { "example.com", "example.org", "example.net" }
+      #
+      # Default:
+      #     none
+      #
+      #domains = {}
+
+      # Local domains (file storage)
+      # Instead of listing your local domains directly, you can also write them to a
+      # file and have PostSRSd read it. This is particularly useful if you have a
+      # large number of domains for which you need to act as mail forwarder. PostSRSd
+      # reads this file before it chroots and drops root privileges. The file format
+      # is one domain per line.
+      #
+      # Example:
+      #     domains-file = "/usr/local/etc/postsrsd.domains"
+      #
+      # Default:
+      #     none
+      #
+      domains-file = /etc/postsrsd.domains
+
+      # Watch domains file for changes
+      # You can tell PostSRSd to automatically reconfigure itself whenever the domain
+      # file changes. Alternatively, sending SIGHUP to the PostSRSd process will also
+      # trigger a reload.
+      #
+      # Default:
+      #     domains-file-watch = off
+      #
+      domains-file-watch = on
+
+      # Dedicated SRS rewrite domain.
+      # The local domain which is used to create the ephemeral SRS envelope
+      # addresses. It is recommended that you use a dedicated mail domain for SRS if
+      # you serve multiple unrelated domains (e.g. for your customers), to prevent
+      # privacy issues. If unset, the first configured local domain is used. In
+      # either case, make sure that the SRS rewrite domain has proper mail
+      # authentication configured, such as an SPF record in the DNS.
+      #
+      # Example:
+      #     srs-domain = "srs.example.com"
+      #
+      # Default:
+      #     none
+      #
+      #srs-domain =
+
+      # Socketmap lookup table for Postfix integration.
+      # Traditionally, PostSRSd interacts with Postfix through the canonicalization
+      # lookup tables of the cleanup daemon. If you use a unix socket, be aware that
+      # most Postfix instances will jail their cleanup daemon in a /var/spool/postfix
+      # chroot, so no other path will be visible to them. Unix sockets are created
+      # before PostSRSd chroots and drops root privileges.
+      #
+      # Examples:
+      #     socketmap = unix:/var/spool/postfix/srs
+      #     socketmap = inet:localhost:10003
+      #
+      # Default:
+      #     socketmap = unix:/var/spool/postfix/srs
+      #
+      socketmap = unix:/var/spool/postfix/srs
+
+      # Connection keep-alive timeout.
+      # After PostSRSd has served a request, it will keep the connection open for a
+      # while longer, in case Postfix has additional queries. PostSRSd will close
+      # the connection after the configured time (in seconds) has expired.
+      #
+      # Default:
+      #     keep-alive = 30
+      #
+      #keep-alive = 30
+
+      # Connection limit.
+      # This is a hard limit for the number of concurrent connections. It is
+      # a fail-safe to prevent PostSRSd from forking an unbounded number of
+      # child processes. Once this limit is reached, PostSRSd will accept but
+      # immediately close incoming connections without serving requests.
+      #
+      # Default:
+      #     connection-limit = 200
+      #
+      #connection-limit = 200
+
+      # Secret keys for signing and verifying SRS addresses.
+      # Rewritten addresses are tagged with a truncated HMAC-SHA1 signature, to
+      # prevent tampering and forged envelope addresses. You can have more than
+      # one signing secret; each line of the secrets file is considered one secret
+      # key. If an incoming signature matches any key, it is accepted. Outgoing
+      # signatures will always be generated with the first configured secret.
+      #
+      # For security reasons, you should also make sure that the file is owned and
+      # only accessible by root (chmod 600). PostSRSd reads this file before it
+      # chroots and drops root privileges.
+      #
+      # Default:
+      #     secrets-file = "/usr/local/etc/postsrsd.secret"
+      #
+      secrets-file = "/etc/postsrsd.secret"
+
+      # Milter endpoint for MTA integration.
+      # PostSRSd can act as a milter to rewrite envelope addresses if it has been
+      # built with milter support. Unix sockets are created before PostSRSd chroots
+      # and drops root privileges.
+      #
+      # Examples:
+      #     milter = unix:/var/spool/postfix/srs_milter
+      #     milter = inet:localhost:9997
+      #
+      # Default:
+      #     none
+      #
+      #milter =
+
+      # Original envelope sender handling.
+      # When the envelope sender is rewritten, the original address can either be
+      # embedded in the rewritten address, or stored in a local database. Embedding
+      # makes PostSRSd work fully stateless, but the full sender address needs to fit
+      # into the localpart of the embedded address, effectively limiting the length
+      # of forwardable sender addresses to 51 octets. Storing the sender address in a
+      # database circumvents this problem, but makes PostSRSd vulnerable to an
+      # attacker sending vast amounts of emails with fake sender addresses, all of
+      # which need to be stored in the database.
+      #
+      # If you are unsure which option suits your use-case best, the vast majority of
+      # mail addresses will be relatively short, so you should pick "embedded".
+      #
+      # Examples:
+      #     original-envelope = embedded
+      #     original-envelope = database
+      #
+      # Default:
+      #     original-envelope = embedded
+      #
+      #original-envelope = embedded
+
+      # Database for envelope sender storage.
+      # If you decide to store envelope senders in a database, this database will be
+      # used. The option is ignored if original-envelope is set to "embedded". Also
+      # note that PostSRSd needs to be built with SQLite or Redis support for this.
+      #
+      # PostSRSd accesses this database after it chroots and drops root privileges, so
+      # the filename needs to be relative to the chroot directory.
+      #
+      # Examples:
+      #     envelope-database = "sqlite:senders.db"
+      #     envelope-database = "redis:localhost:6379"
+      #
+      # Default:
+      #     none
+      #
+      #envelope-database = "sqlite:senders.db"
+
+      # Force milter SRS rewrite for local recipients
+      # If PostSRSd is run as milter and finds that a particular mail has only
+      # recipients in the configured local domains, it will assume that no
+      # forwarding is required and skip rewriting the envelope sender.
+      #
+      # If this option is enabled, the milter will process sender and recipients
+      # independently like the socketmap implementation.
+      #
+      # Default:
+      #     milter-rewrite-local = off
+      #
+      #milter-rewrite-local = off
+
+      # Recipient limit per milter transaction
+      # PostSRSd rejects emails which exceed this recipient limit, to prevent
+      # broken or malicious MTAs from consuming arbitrary amounts of memory. The
+      # default limit matches the Postfix default limit for SMTP transactions.
+      #
+      # Default:
+      #     milter-recipient-limit = 1000
+      #
+      #milter-recipient-limit = 1000
+
+      # SRS tag separator
+      # This is the character following the initial SRS0 or SRS1 tag of a generated
+      # sender address. Valid separators are "=", "+", and "-". Unless you have a
+      # very good reason, you should leave this setting at its default.
+      #
+      # Default:
+      #     separator = "="
+      #
+      #separator = "="
+
+      # SRS hash signature length
+      # Any SRS address will be signed with a truncated hash to prevent tampering and
+      # ensure that only legitimate email bounces will be returned to sender. The
+      # default length provides adequate security without taking up too much valuable
+      # space. Unless you know what you are doing, you should leave this setting at
+      # its default.
+      #
+      # WARNING: You can break your mail server (or worse, turn it into a spam relay)
+      # if you mess up this setting.
+      #
+      # Default:
+      #     hash-length = 4
+      #
+      #hash-length = 4
+
+      # SRS minimum acceptable hash signature length
+      # This is the mininum signature length that PostSRSd considers valid. It is a
+      # separate setting because if you decide to increase the hash length, you may
+      # want to keep accepting the shorter hashes for a 24 hour grace period. Again,
+      # Unless you know what you are doing, you should leave this setting at its
+      # default.
+      #
+      # WARNING: You can break your mail server (or worse, turn it into a spam relay)
+      # if you mess up this setting.
+      #
+      # Default:
+      #     hash-minimum = 4
+      #
+      #hash-minimum = 4
+
+      # Always rewrite sender addresses
+      # You can force PostSRSd to rewrite any sender address, even if it has been
+      # rewritten already. You probably do not want to do this, though.
+      #
+      # Default:
+      #     always-rewrite = off
+      #
+      #always-rewrite = off
+
+      # Execute PostSRSd as unprivileged user
+      # Drop root privileges and run as this user before entering the main loop and
+      # handling untrusted input. To prevent PostSRSd from changing users, set this to
+      # the empty string.
+      #
+      # Default:
+      #     unprivileged-user = "nobody"
+      #
+      unprivileged-user = "postsrsd"
+
+      # Execute PostSRSd in chroot jail
+      # PostSRSd will jail itself in the given directory, which adds an additional
+      # layer of protection against the exploitation of security bugs in PostSRSd. To
+      # prevent PostSRSd from chrooting, set this to the empty string.
+      #
+      # Default:
+      #     chroot-dir = "/usr/local/var/lib/postsrsd"
+      #
+      chroot-dir = "/var/lib/postsrsd"
+
+      # Syslog
+      # PostSRSd writes log messages to stderr. If you enable this option, PostSRSd
+      # will also send all messages to the syslog mail facility.
+      #
+      # Default:
+      #     syslog = off
+      #
+      #syslog = off
+
+      # Debug
+      # This option makes PostSRSd more verbose in its logging, which can be useful
+      # to hunt down configuration problems.
+      #
+      # Default:
+      #     debug = off
+      #
+      #debug = off
+
+      # Seccomp sandboxing
+      # This option enables additional sandboxing while handling untrusted input.
+      #
+      # Default:
+      #     seccomp = on
+      #
+      #seccomp = on      
+    postsrsd.service: |
+      # PostSRSd systemd service file
+      # Copyright 2022-2026 Timo Röhling
+      # SPDX-License-Identifier: FSFUL
+      #
+      # The copyright holder gives unlimited permission to copy, distribute and modify
+      # this file.
+
+      [Unit]
+      Description=Sender Rewriting Scheme daemon for Postfix
+      Before=postfix.service
+      After=network.target
+
+      [Service]
+      Type=notify-reload
+      ExecStart=/usr/sbin/postsrsd -C /etc/postsrsd.conf
+
+      CapabilityBoundingSet=CAP_DAC_OVERRIDE CAP_NET_BIND_SERVICE CAP_SETGID CAP_SETUID CAP_SYS_CHROOT
+      LockPersonality=yes
+      MemoryDenyWriteExecute=yes
+      NoNewPrivileges=yes
+      NotifyAccess=main
+
+      PrivateDevices=yes
+      PrivateTmp=yes
+
+      ProcSubset=pid
+      ProtectClock=yes
+      ProtectControlGroups=yes
+      ProtectHome=yes
+      ProtectHostname=yes
+      ProtectKernelLogs=yes
+      ProtectKernelModules=yes
+      ProtectKernelTunables=yes
+      ProtectProc=noaccess
+      ProtectSystem=strict
+
+      ReadWritePaths=/var/spool/postfix /var/lib/postsrsd
+
+      RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+      RestrictNamespaces=yes
+      RestrictRealtime=yes
+      RestrictSUIDSGID=yes
+
+      SystemCallArchitectures=native
+
+      UMask=077
+
+      [Install]
+      WantedBy=multi-user.target
+  mv:
+    postsrsd.service: 'debian/postsrsd.service'
+  postinst: |
+    if ! getent passwd postsrsd >/dev/null ; then
+      echo "PostSRSd: Adding system user 'postsrsd'"
+      adduser --system --group --gecos "PostSRSd User" --home /var/lib/postsrsd postsrsd >/dev/null
+    fi
+    if [ -d '/var/log/postsrsd' ]; then
+      chown postsrsd:postsrsd /var/log/postsrsd
+    fi
+    if [ ! -f /etc/postsrsd.secret ]; then
+      echo "PostSRSd: Generating secret key"
+      od -An -N32 -tx1 /dev/urandom | tr -d ' \n' > /etc/postsrsd.secret
+      chown postsrsd:postsrsd /etc/postsrsd.secret
+      chmod 600 /etc/postsrsd.secret
+    fi
+    if [ ! -f /etc/postsrsd.domains ]; then
+      touch /etc/postsrsd.domains
+      chown postsrsd:postsrsd /etc/postsrsd.domains
+      chmod 600 /etc/postsrsd.domains
+    fi
+    if [ -f /etc/postsrsd.conf ] && ! grep -qE '^srs-domain\s*=' /etc/postsrsd.conf; then
+      echo "PostSRSd: add default SRS domain configuration file"
+      srs="srs.$(hostname --fqdn)"
+      sed -Ei "s/^#(srs-domain\s*=)/\1 \"${srs}\"/" /etc/postsrsd.conf
+    fi
